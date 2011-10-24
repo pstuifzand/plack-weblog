@@ -3,3 +3,14 @@ body {
 div.entry {
     margin-bottom: 32px;
 }
+div.entry h2 a {
+    color: inherit;
+}
+div.entry .created a {
+    color: inherit;
+    text-decoration:none;
+}
+
+h1 a {
+    color: inherit;
+}
