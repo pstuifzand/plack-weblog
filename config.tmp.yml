@@ -1,0 +1,9 @@
+weblog:
+    title: Insert your title here
+    document_root: 'htdocs'
+db:
+    tweevijftig:
+        Host: localhost
+        User: username
+        Pass: password
+        DB: databasename
