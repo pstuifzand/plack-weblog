@@ -1,0 +1,8 @@
+<div class="entry">
+  <h2>[% entry.title %]</h2>
+  <div class='content'>[% entry.content %]</div>
+  <div class='tools'>
+    <span class='tool'><a href='/post/[% entry.slug %]#comments'>Reageer</a></span> &middot;
+    <span class='created'><a href='/post/[% entry.slug %]'>[% human_readable_date(entry.created) %]</a></span>
+  </div>
+</div>
