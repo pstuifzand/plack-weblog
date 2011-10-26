@@ -7,7 +7,9 @@ use DBIx::DWIW;
 
 use YAML::XS 'LoadFile';
 use Plack::Util::Accessor qw/config/;
+use DateTime::Format::RSS;
 
+use Weblog::DB;
 use XML::RSS;
 
 sub call {
@@ -16,9 +18,11 @@ sub call {
 
     my $title = $self->config->{weblog}{title};
 
-    my $db = DBIx::DWIW->Connect(%{$self->config->{db}{weblog}});
+    my $db = Weblog::DB->Connect(%{$self->config->{db}{weblog}});
 
-    my @entries = $db->Hashes("SELECT * FROM `entry` ORDER BY `created` DESC LIMIT 10");
+    my @entries = $db->Entries;
+
+    my $fmt = DateTime::Format::RSS->new(version => '2.0');
 
     my $rss = XML::RSS->new(version => '2.0');
     $rss->channel(
@@ -28,7 +32,12 @@ sub call {
     );
 
     for (@entries) {
-        $rss->add_item(link => 'http://tweevijftig.nl/' . $_->{slug}, title => $_->{title}, description => $_->{content});
+        $rss->add_item(
+            link => 'http://tweevijftig.nl/' . $_->{slug},
+            title => $_->{title},
+            description => $_->{content},
+            pubDate => $_->{created}->strftime( "%a, %d %b %Y %H:%M:%S %z" ),
+         );
     }
 
     return [ 200, [ 'Content-Type', 'application/rss+xml' ], [ $rss->as_string ] ];
