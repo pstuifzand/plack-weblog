@@ -1,8 +1,52 @@
 <div class="entry">
   <h2>[% entry.title %]</h2>
   <div class='content'>[% entry.content %]</div>
+
   <div class='tools'>
-    <span class='tool'><a href='/post/[% entry.slug %]#comments'>Reageer</a></span> &middot;
+    <span class='tool'><a href='/post/[% entry.slug %]#comments'>[% IF entry.comment_count == 0 %]Reageer[% ELSE %][% entry.comment_count %] reacties[% END %]</a></span> &middot;
     <span class='created'><a href='/post/[% entry.slug %]'>[% human_readable_date(entry.created) %]</a></span>
   </div>
+
+[% IF show_comments %]
+  <h3>Reacties</h3>
+
+  <div class="comments">
+    [% FOR comment IN entry.comments %]
+      <div class="comment">
+        <div class="left">
+          <div class="name">[% comment.name %]</div>
+          <div class="date">[% human_readable_date(comment.created) %]</div>
+        </div>
+        <div class="comment-text">[% comment.comment|xml %]</div>
+      </div>
+    [% END %]
+  </div>
+
+  <form action="/post/[% entry.slug %]/comment" method="post" class="form-stacked">
+    <fieldset>
+      <legend>Reageer ook</legend>
+      <div class="clearfix">
+        <div class="input">
+          <label for="name">Naam</label>
+          <input type="text" id="name" name="name" class="xlarge">
+        </div>
+      </div>
+      <div class="clearfix">
+        <div class="input">
+          <label for="email">Emailadres</label>
+          <input type="text" id="email" name="email" class="xlarge">
+        </div>
+      </div>
+      <div class="clearfix">
+        <div class="input">
+          <label for="comment">Reactie</label>
+          <textarea name="comment" id="comment" class="xxlarge" rows="5"></textarea>
+        </div>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <input class="btn primary" type="submit" value="Reageer">
+    </div>
+  </form>
+[% END %]
 </div>

@@ -10,7 +10,30 @@ div.entry .created a {
     color: inherit;
     text-decoration:none;
 }
-
 h1 a {
     color: inherit;
+}
+h3 {
+    margin-top: 12px;
+}
+.comments {
+    margin-bottom: 48px;
+}
+.comment {
+    clear:both;
+    border-top: 1px solid #ccc;
+    padding: 3px;
+}
+.comment .left {
+    float: left;
+    width: 130px;
+}
+.comment .name {
+    font-weight:bold;
+}
+.comment .date {
+    clear:right;
+}
+.comment .comment-text {
+    margin-left: 140px;
 }

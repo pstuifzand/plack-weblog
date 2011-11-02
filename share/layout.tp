@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>[% title %]</title>
@@ -15,6 +15,9 @@
         <div class='span5'>
           [% INCLUDE 'sidebar.tp' %]
         </div>
+      </div>
+      <div class='row'>
+        <p>Een website van Peter Stuifzand.</p>
       </div>
     </body>
   </html>

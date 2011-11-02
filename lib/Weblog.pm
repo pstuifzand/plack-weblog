@@ -5,12 +5,11 @@ use strict;
 use warnings;
 
 use Data::Dumper;
-use Weblog::DB;
 
-use YAML::XS 'LoadFile';
 use Plack::Util::Accessor qw/config/;
 use Date::Period::Human;
 use Template;
+use Plack::Request;
 
 sub call {
     my $self = shift;
@@ -21,22 +20,47 @@ sub call {
     }
 
     my $title = $self->config->{weblog}{title};
-    my $db = Weblog::DB->Connect(%{$self->config->{db}{weblog}});
+
+    my $db = $env->{'weblog.db'};
+    my $site_id = $env->{'weblog.site_id'};
 
     my $dph = Date::Period::Human->new();
     my $template = Template->new(INCLUDE_PATH => './share');
 
     my $out = '';
 
-    if ($env->{PATH_INFO} =~ m{^/post/([a-z\-]+)$}) {
+    if ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)$}) {
         my $slug = $1;
-        my $entry = $db->Entry($slug);
-        $template->process('entry.tp', { title => $title, human_readable_date => sub { $dph->human_readable($_[0]) }, entry => $entry }, \$out) or die $Template::ERROR;
+
+        my $entry = $db->Entry($site_id, $slug);
+        $template->process('entry.tp', {
+                show_comments => 1,
+                human_readable_date => sub { $dph->human_readable($_[0]) },
+                title => $title,
+                entry => $entry,
+            }, \$out) or die $Template::ERROR;
+    }
+    elsif ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)/comment$}) {
+        my $slug = $1;
+
+        my $req = Plack::Request->new($env);
+
+        my $comment = {
+            name       => $req->param('name'),
+            comment    => $req->param('comment'),
+            email      => $req->param('email'),
+            user_agent => $req->header('User-Agent'),
+            remote_ip  => $req->header('X-Real-IP'),
+        };
+
+        $db->AddComment($site_id, $slug, $comment);
+
+        return [ 302, [ 'Location', '/post/' . $slug ], [] ];
     }
     else {
-        my @entries = $db->Entries;
+        my @entries = $db->Entries($site_id);
         for my $entry (@entries) {
-            $template->process('entry.tp', { title => $title, human_readable_date => sub { $dph->human_readable($_[0]) }, entry => $entry }, \$out) or die $Template::ERROR;
+            $template->process('entry.tp', { show_comments => 0, title => $title, human_readable_date => sub { $dph->human_readable($_[0]) }, entry => $entry }, \$out) or die $Template::ERROR;
         }
     }
 

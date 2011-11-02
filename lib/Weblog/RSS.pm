@@ -18,9 +18,10 @@ sub call {
 
     my $title = $self->config->{weblog}{title};
 
-    my $db = Weblog::DB->Connect(%{$self->config->{db}{weblog}});
+    my $db = $env->{'weblog.db'};
+    my $site_id = $env->{'weblog.site_id'};
 
-    my @entries = $db->Entries;
+    my @entries = $db->Entries($site_id);
 
     my $fmt = DateTime::Format::RSS->new(version => '2.0');
 
