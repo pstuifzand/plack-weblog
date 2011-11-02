@@ -1,0 +1,8 @@
+<table>
+  <tr><th>Titel</th></tr>
+  [% FOR entry IN entries %]
+  <tr>
+    <td><a href="/post/[% entry.slug %]">[% entry.title %]</a></td>
+  </tr>
+  [% END %]
+</table>

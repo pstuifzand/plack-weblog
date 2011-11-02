@@ -64,5 +64,26 @@ sub AddComment {
     return;
 }
 
+sub _create_slug {
+    my ($title) = @_;
+    $title = lc $title;
+    $title =~ s/[^a-z0-9]+/-/g;
+    $title =~ s/-+/-/g;
+    $title =~ s/^-//g;
+    $title =~ s/-$//g;
+    return $title;
+}
+
+sub CreateEntry {
+    my ($self, $site_id, $entry) = @_;
+
+    $entry->{slug} = _create_slug($entry->{title});
+
+    $self->Execute("INSERT INTO `entry` (`site_id`, `slug`, `title`, `content`, `created`)
+        VALUES (?, ?, ?, ?, NOW())", $site_id, $entry->{slug}, $entry->{title}, $entry->{content});
+
+    return;
+}
+
 1;
 
