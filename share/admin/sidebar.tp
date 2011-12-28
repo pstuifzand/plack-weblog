@@ -1,2 +1,10 @@
-<h2>Beheer</h2>
-<p><a href="/admin/newpost">Nieuw bericht schrijven</a></p>
+
+<form action="/admin/newpost" method="get">
+  <input class="btn primary" type="submit" value="Nieuw bericht schrijven">
+</form>
+<p>
+<ul>
+  <li><a href="/admin/config">Titel e.d.</a></li>
+  <li><a href="/">Homepage</a></li>
+</ul>
+</p>

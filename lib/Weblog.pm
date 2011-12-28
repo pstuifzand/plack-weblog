@@ -19,10 +19,10 @@ sub call {
         return [ 302, [ 'Location', 'http://github.com/pstuifzand/plack-weblog' ], [] ];
     }
 
-    my $title = $self->config->{weblog}{title};
-
     my $db = $env->{'weblog.db'};
     my $site_id = $env->{'weblog.site_id'};
+
+    my $site_info = $db->GetSiteInfo($site_id);
 
     my $dph = Date::Period::Human->new();
     my $template = Template->new(INCLUDE_PATH => './share');
@@ -36,8 +36,8 @@ sub call {
         $template->process('entry.tp', {
                 show_comments => 1,
                 human_readable_date => sub { $dph->human_readable($_[0]) },
-                title => $title,
                 entry => $entry,
+                site_info => $site_info,
             }, \$out) or die $Template::ERROR;
     }
     elsif ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)/comment$}) {
@@ -60,12 +60,17 @@ sub call {
     else {
         my @entries = $db->Entries($site_id);
         for my $entry (@entries) {
-            $template->process('entry.tp', { show_comments => 0, title => $title, human_readable_date => sub { $dph->human_readable($_[0]) }, entry => $entry }, \$out) or die $Template::ERROR;
+            $template->process('entry.tp', {
+                    show_comments => 0,
+                    human_readable_date => sub { $dph->human_readable($_[0]) },
+                    entry => $entry,
+                    site_info => $site_info,
+                }, \$out) or die $Template::ERROR;
         }
     }
 
     my $out2 = '';
-    $template->process('layout.tp', { title => $title, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+    $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
 
 
     return [ 200, [ 'Content-Type', 'text/html' ], [ $out2 ] ];

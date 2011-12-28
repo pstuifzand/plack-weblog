@@ -77,11 +77,25 @@ sub _create_slug {
 sub CreateEntry {
     my ($self, $site_id, $entry) = @_;
 
-    $entry->{slug} = _create_slug($entry->{title});
+    if (!$entry->{slug}) {
+        $entry->{slug} = _create_slug($entry->{title});
+    }
 
     $self->Execute("INSERT INTO `entry` (`site_id`, `slug`, `title`, `content`, `created`)
         VALUES (?, ?, ?, ?, NOW())", $site_id, $entry->{slug}, $entry->{title}, $entry->{content});
 
+    return;
+}
+
+sub GetSiteInfo {
+    my ($self, $site_id) = @_;
+    return $self->Hash("SELECT * FROM `site_text` WHERE `site_id` = ?", $site_id);
+}
+
+sub SetSiteInfo {
+    my ($self, $site_id, $info) = @_;
+
+    $self->Execute("INSERT INTO `site_text` (`site_id`, `title`) VALUES (?,?) ON DUPLICATE KEY UPDATE `title` = VALUES(`title`)", $site_id, $info->{title});
     return;
 }
 

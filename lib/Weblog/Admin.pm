@@ -15,15 +15,22 @@ sub call {
     my $self = shift;
     my $env = shift;
 
+    return [ 403, [], [] ] if $env->{HTTP_X_REAL_IP} ne '127.0.0.1' and $env->{HTTP_X_REAL_IP} ne '192.168.1.59';
+
     my $title = $self->config->{weblog}{title};
 
     my $db = $env->{'weblog.db'};
     my $site_id = $env->{'weblog.site_id'};
+    my $site_info = $db->GetSiteInfo($site_id);
 
     my $dph = Date::Period::Human->new();
     my $template = Template->new(INCLUDE_PATH => './share');
 
     my $out = '';
+
+    my $params = {
+        site_info => $site_info,
+    };
 
     if ($env->{PATH_INFO} =~ m{^/post$}) {
         my $req = Plack::Request->new($env);
@@ -40,6 +47,16 @@ sub call {
     elsif ($env->{PATH_INFO} =~ m{^/newpost$}) {
         $template->process('admin/post.tp', {}, \$out)
     }
+    elsif ($env->{PATH_INFO} =~ m{^/config$}) {
+        $template->process('admin/config.tp', $params, \$out)
+    }
+    elsif ($env->{PATH_INFO} =~ m{^/config_set$}) {
+        my $req = Plack::Request->new($env);
+        my $site_id = $env->{'weblog.site_id'};
+        my $title = $req->param('title');
+        $db->SetSiteInfo($site_id, { title => $title });
+        return [ 302, [ 'Location', '/admin' ], [] ];
+    }
     else {
         my @entries = $db->Entries($site_id);
         $template->process('admin/index.tp', {
@@ -50,7 +67,11 @@ sub call {
     }
 
     my $out2 = '';
-    $template->process('admin/layout.tp', { title => $title, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+
+    $template->process('admin/layout.tp', {
+            insert_content_here => $out,
+            site_info           => $site_info,
+        }, \$out2) or die $Template::ERROR;
 
     return [ 200, [ 'Content-Type', 'text/html' ], [ $out2 ] ];
 }

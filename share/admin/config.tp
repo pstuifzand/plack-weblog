@@ -1,0 +1,15 @@
+<h2>Instellingen</h2>
+
+<br>
+<form action="/admin/config_set" method="post" class="form-stacked">
+  <fieldset>
+    <legend>Wijzig de instellingen</legend>
+    <div class="clearfix">
+      <label for="title">Titel van je weblog</label>
+      <input type="text" name="title" id="title" class="xxlarge" value="[% site_info.title %]">
+    </div>
+  </fieldset>
+  <div class="actions">
+    <input class="btn primary" type="submit" value="Instellingen opslaan">
+  </div>
+</form>

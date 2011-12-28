@@ -1,5 +1,3 @@
-<h2>Nieuw bericht</h2>
-
 <form action="/admin/post" method="post" class="form-stacked">
   <fieldset>
     <legend>Schrijf een nieuw bericht</legend>

@@ -1,4 +1,5 @@
 use lib 'lib';
+use local::lib;
 
 use Plack::Builder;
 use Plack::App::File;

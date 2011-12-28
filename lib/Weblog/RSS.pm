@@ -7,10 +7,10 @@ use DBIx::DWIW;
 
 use YAML::XS 'LoadFile';
 use Plack::Util::Accessor qw/config/;
-use DateTime::Format::RSS;
 
 use Weblog::DB;
 use XML::RSS;
+use DateTime::Format::RSS;
 
 sub call {
     my $self = shift;

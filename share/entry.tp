@@ -1,5 +1,7 @@
 <div class="entry">
+  [% IF entry.title %]
   <h2>[% entry.title %]</h2>
+  [% END %]
   <div class='content'>[% entry.content %]</div>
 
   <div class='tools'>

@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>[% title %] | Beheer</title>
+    <title>[% site_info.title %] | Beheer</title>
     <link rel='stylesheet' href='/public/bootstrap.min.css' />
     <link rel='stylesheet' href='/public/style.css' />
   </head>
-  <body>
+  <body class='admin'>
     <div class='container'>
-      <h1><a href='/'>Beheer</a></h1>
+      <h1><a href='/'>[% site_info.title %]</a></h1>
 
       <div class='row'>
-        <div class='span11'>
-          [% insert_content_here %]
-        </div>
-        <div class='span5'>
+        <div class='span3'>
           [% INCLUDE 'admin/sidebar.tp' %]
         </div>
+        <div class='span13 last'>
+          [% insert_content_here %]
+        </div>
       </div>
-      <div class='row'>
-        <p>Een website van Peter Stuifzand.</p>
+      <div class='row footer'>
       </div>
     </body>
   </html>
