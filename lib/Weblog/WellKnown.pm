@@ -24,10 +24,9 @@ sub call {
             [ qq{<?xml version='1.0' encoding='UTF-8'?>
 <XRD xmlns='http://docs.oasis-open.org/ns/xri/xrd-1.0'>
     <hm:Host xmlns:hm="http://host-meta.net/xrd/1.0">$host</hm:Host>
-    <Link 
-        rel='lrdd' 
-        type='application/xrd+xml'
-        template='http://$host/describe?uri={uri}' />
+
+    <Link rel='lrdd' type='application/xrd+xml'
+          template='http://$host/describe?uri={uri}' />
 </XRD>
 }],
         ];
