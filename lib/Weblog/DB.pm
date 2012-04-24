@@ -33,16 +33,11 @@ sub Entry {
     return $entry;
 }
 
-sub AllEntries {
+sub Pages {
     my $self = shift;
     my $site_id = shift;
-    my $limit = shift || 10;
 
-    if (!($limit =~ m/^(\d+)$/)) {
-        die "limit should be a number";
-    }
-    $limit = $1;
-    my @entries = $self->Hashes("SELECT * FROM `entry` WHERE `site_id` = ? ORDER BY `created` DESC LIMIT $limit",
+    my @entries = $self->Hashes("SELECT * FROM `entry` WHERE `site_id` = ? AND `type` = 'page' ORDER BY `title` ASC",
         $site_id);
 
     @entries = map { $self->_FilterEntry($_) } @entries;

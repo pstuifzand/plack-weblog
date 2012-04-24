@@ -94,11 +94,13 @@ sub call {
         return [ 302, [ 'Location', '/admin' ], [] ];
     }
     else {
-        my @entries = $db->AllEntries($site_id);
+        my @entries = $db->Entries($site_id);
+        my @pages = $db->Pages($site_id);
         $template->process('admin/index.tp', {
                 title               => $title,
                 human_readable_date => sub { $dph->human_readable($_[0]) },
                 entries             => \@entries,
+                pages               => \@pages,
             }, \$out) or die $Template::ERROR;
     }
 
