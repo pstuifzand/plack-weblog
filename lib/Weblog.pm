@@ -40,6 +40,10 @@ sub call {
             entry => $entry,
             site_info => $site_info,
         }, \$out) or die $Template::ERROR;
+
+        my $out2 = '';
+        $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+        return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
     }
     elsif ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)/comment$}) {
         my $slug = $1;
@@ -58,7 +62,20 @@ sub call {
 
         return [ 302, [ 'Location', '/post/' . $slug ], [] ];
     }
-    else {
+    elsif ($env->{PATH_INFO} =~ m{^/([a-z0-9\-]+)$}) {
+        my $slug = $1;
+        my $entry = $db->Entry($site_id, $slug);
+        $template->process('page.tp', {
+            show_comments => 1,
+            human_readable_date => sub { $dph->human_readable($_[0]) },
+            entry => $entry,
+            site_info => $site_info,
+        }, \$out) or die $Template::ERROR;
+        my $out2 = '';
+        $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+        return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
+    }
+    elsif ($env->{PATH_INFO} =~ m{^/$}) {
         my @entries = $db->Entries($site_id);
         for my $entry (@entries) {
             $template->process('entry.tp', {
@@ -68,13 +85,11 @@ sub call {
                 site_info => $site_info,
             }, \$out) or die $Template::ERROR;
         }
+        my $out2 = '';
+        $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+        return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
     }
-
-    my $out2 = '';
-    $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
-
-
-    return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
+    return [ 404, [], [] ];
 }
 
 1;

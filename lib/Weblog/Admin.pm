@@ -32,6 +32,13 @@ sub call {
         site_info => $site_info,
     };
 
+    my $types = [
+        {type=>'blogpost',name=>'Bericht'},
+        {type=>'page',name=>'Pagina'},
+    ];
+    my $type_names = {
+        map { $_->{type} => $_->{name} } @$types,
+    };
     if ($env->{PATH_INFO} =~ m{^/post$}) {
         my $req = Plack::Request->new($env);
 
@@ -67,10 +74,12 @@ sub call {
             human_readable_date => sub { $dph->human_readable($_[0]) },
             entry               => $entry,
             site_info           => $site_info,
+            types               => $types,
+            type_names          => $type_names,
         }, \$out) or die $Template::ERROR;
     }
     elsif ($env->{PATH_INFO} =~ m{^/newpost$}) {
-        $template->process('admin/post.tp', {}, \$out)
+        $template->process('admin/post.tp', {type_names=>$type_names,types=>$types}, \$out)
     }
     elsif ($env->{PATH_INFO} =~ m{^/config$}) {
         $template->process('admin/config.tp', $params, \$out)
@@ -83,7 +92,7 @@ sub call {
         return [ 302, [ 'Location', '/admin' ], [] ];
     }
     else {
-        my @entries = $db->Entries($site_id);
+        my @entries = $db->AllEntries($site_id);
         $template->process('admin/index.tp', {
                 title               => $title,
                 human_readable_date => sub { $dph->human_readable($_[0]) },

@@ -33,7 +33,7 @@ sub Entry {
     return $entry;
 }
 
-sub Entries {
+sub AllEntries {
     my $self = shift;
     my $site_id = shift;
     my $limit = shift || 10;
@@ -43,6 +43,23 @@ sub Entries {
     }
     $limit = $1;
     my @entries = $self->Hashes("SELECT * FROM `entry` WHERE `site_id` = ? ORDER BY `created` DESC LIMIT $limit",
+        $site_id);
+
+    @entries = map { $self->_FilterEntry($_) } @entries;
+
+    return @entries;
+}
+
+sub Entries {
+    my $self = shift;
+    my $site_id = shift;
+    my $limit = shift || 10;
+
+    if (!($limit =~ m/^(\d+)$/)) {
+        die "limit should be a number";
+    }
+    $limit = $1;
+    my @entries = $self->Hashes("SELECT * FROM `entry` WHERE `site_id` = ? AND `type` = 'blogpost' ORDER BY `created` DESC LIMIT $limit",
         $site_id);
 
     @entries = map { $self->_FilterEntry($_) } @entries;
@@ -81,8 +98,8 @@ sub CreateEntry {
         $entry->{slug} = _create_slug($entry->{title});
     }
 
-    $self->Execute("INSERT INTO `entry` (`site_id`, `slug`, `title`, `content`, `created`)
-        VALUES (?, ?, ?, ?, NOW())", $site_id, $entry->{slug}, $entry->{title}, $entry->{content});
+    $self->Execute("INSERT INTO `entry` (`site_id`, `type`, `slug`, `title`, `content`, `created`)
+        VALUES (?, ?, ?, ?, ?, NOW())", $site_id, $entry->{type}, $entry->{slug}, $entry->{title}, $entry->{content});
 
     return;
 }
@@ -90,8 +107,8 @@ sub CreateEntry {
 sub UpdateEntry {
     my ($self, $site_id, $entry) = @_;
 
-    $self->Execute("UPDATE `entry` SET `slug` = ?, `title` = ?, `content` = ?, `changed` = NOW() WHERE `site_id` = ? AND `id` = ?",
-        $entry->{slug}, $entry->{title}, $entry->{content}, $site_id, $entry->{id});
+    $self->Execute("UPDATE `entry` SET `type` = ?, `slug` = ?, `title` = ?, `content` = ?, `changed` = NOW() WHERE `site_id` = ? AND `id` = ?",
+        $entry->{type}, $entry->{slug}, $entry->{title}, $entry->{content}, $site_id, $entry->{id});
     die $@ if $@;
     return;
 }
