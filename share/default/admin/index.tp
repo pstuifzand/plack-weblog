@@ -1,8 +1,26 @@
+<h3>Berichten</h3>
 <table>
-  <tr><th>Titel</th><th></th></tr>
+  <col width="70%">
+  <col width="10%">
+  <col width="20%">
+  <tr><th>Titel</th><th>Datum</th><th></th></tr>
   [% FOR entry IN entries %]
   <tr>
-    <td><a href="/post/[% entry.slug %]">[% IF entry.title %][% entry.title %][% ELSE %]geen titel[% END %]</a></td>
+    <td><a href="/post/[% entry.slug %]">[% IF entry.title %][% entry.title |html %][% ELSE %]geen titel[% END %]</a></td>
+    <td>[% entry.created %]</td>
+    <td><a href="/admin/post/[% entry.slug %]/edit">Wijzig</a></td></td>
+  </tr>
+  [% END %]
+</table>
+
+<h3>Pagina's</h3>
+<table>
+  <col width="80%">
+  <col width="20%">
+  <tr><th>Titel</th><th></th></tr>
+  [% FOR entry IN pages %]
+  <tr>
+    <td><a href="/[% entry.slug %]">[% IF entry.title %][% entry.title %][% ELSE %]geen titel[% END %]</a></td>
     <td><a href="/admin/post/[% entry.slug %]/edit">Wijzig</a></td></td>
   </tr>
   [% END %]

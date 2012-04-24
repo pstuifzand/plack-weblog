@@ -6,12 +6,21 @@
       <input type="text" name="title" id="title" value="[% entry.title | xml %]" class="xxlarge">
     </div>
     <div class="clearfix">
+      <label for="type">Type</label>
+      <select name="type" id="type">
+        <option value="[% entry.type | xml %]">[% type_names.item(entry.type) | html %] (huidig)</option>
+        [% FOR t IN types %]
+          <option value='[% t.type %]'>[% t.name | html %]</option>
+        [% END %]
+      </select>
+    </div>
+    <div class="clearfix">
       <label for="slug">Slug</label>
       <input type="text" name="slug" id="slug" value="[% entry.slug | xml %]" class="xxlarge">
     </div>
     <div class="clearfix">
       <label for="content">Uw tekst</label>
-      <textarea name="content" id="content" class="xxlarge" rows="15">[% entry.content | xml %]</textarea>
+      <textarea name="content" id="content" class="ckeditor xxlarge" rows="15">[% entry.content | xml %]</textarea>
     </div>
   </fieldset>
   <div class="actions">

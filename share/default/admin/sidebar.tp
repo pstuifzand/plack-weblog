@@ -2,9 +2,8 @@
 <form action="/admin/newpost" method="get">
   <input class="btn primary" type="submit" value="Nieuw bericht schrijven">
 </form>
-<p>
 <ul>
   <li><a href="/admin/config">Titel e.d.</a></li>
   <li><a href="/">Homepage</a></li>
+  <li><a href="/admin">Admin homepage</a></li>
 </ul>
-</p>

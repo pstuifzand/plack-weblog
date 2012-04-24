@@ -19,5 +19,12 @@
       </div>
       <div class='row footer'>
       </div>
-    </body>
-  </html>
+    </div>
+    <script src="/public/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="/public/ckeditor/adapters/jquery.js"></script>
+    <script>
+      CKEDITOR.config.toolbar = 'Basic';
+      $('.ckeditor').ckeditor();
+    </script>
+  </body>
+</html>

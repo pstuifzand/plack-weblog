@@ -6,8 +6,16 @@
       <input type="text" name="title" id="title" class="xxlarge">
     </div>
     <div class="clearfix">
+      <label for="type">Type</label>
+      <select name="type" id="type">
+        [% FOR t IN types %]
+          <option value='[% t.type %]'>[% t.name | html %]</option>
+        [% END %]
+      </select>
+    </div>
+    <div class="clearfix">
       <label for="content">Uw tekst</label>
-      <textarea name="content" id="content" class="xxlarge" rows="15"></textarea>
+      <textarea name="content" id="content" class="xxlarge ckeditor" rows="15"></textarea>
     </div>
   </fieldset>
   <div class="actions">
