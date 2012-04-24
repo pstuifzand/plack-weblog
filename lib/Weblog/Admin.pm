@@ -45,6 +45,7 @@ sub call {
         my $entry = {
             title => $req->param('title'),
             content  => $req->param('content'),
+            type    => $req->param('type'),
         };
 
         $db->CreateEntry($site_id, $entry);
@@ -59,6 +60,7 @@ sub call {
             title   => $req->param('title'),
             slug    => $req->param('slug'),
             content => $req->param('content'),
+            type    => $req->param('type'),
         };
 
         $db->UpdateEntry($site_id, $entry);
