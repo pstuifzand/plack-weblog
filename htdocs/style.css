@@ -38,3 +38,16 @@ h3 {
 .comment .comment-text {
     margin-left: 140px;
 }
+
+blockquote p {
+    font-size:inherit;
+}
+div.entry p {
+    line-height: 1.5em;
+}
+div.entry ul {
+    margin-top: 12px;
+}
+div.entry li {
+    
+}

@@ -87,6 +87,15 @@ sub CreateEntry {
     return;
 }
 
+sub UpdateEntry {
+    my ($self, $site_id, $entry) = @_;
+
+    $self->Execute("UPDATE `entry` SET `slug` = ?, `title` = ?, `content` = ?, `changed` = NOW() WHERE `site_id` = ? AND `id` = ?",
+        $entry->{slug}, $entry->{title}, $entry->{content}, $site_id, $entry->{id});
+    die $@ if $@;
+    return;
+}
+
 sub GetSiteInfo {
     my ($self, $site_id) = @_;
     return $self->Hash("SELECT * FROM `site_text` WHERE `site_id` = ?", $site_id);

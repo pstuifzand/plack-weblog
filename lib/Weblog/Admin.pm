@@ -44,6 +44,31 @@ sub call {
 
         return [ 302, [ 'Location', '/admin' ], [] ];
     }
+    if ($env->{PATH_INFO} =~ m{^/post/(\d+)/update$}) {
+        my $req = Plack::Request->new($env);
+
+        my $entry = {
+            id      => $1,
+            title   => $req->param('title'),
+            slug    => $req->param('slug'),
+            content => $req->param('content'),
+        };
+
+        $db->UpdateEntry($site_id, $entry);
+
+        return [ 302, [ 'Location', '/admin' ], [] ];
+    }
+    elsif ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)/edit$}) {
+        my $slug = $1;
+
+        my $entry = $db->Entry($site_id, $slug);
+        $template->process('admin/entry-edit.tp', {
+            show_comments       => 1,
+            human_readable_date => sub { $dph->human_readable($_[0]) },
+            entry               => $entry,
+            site_info           => $site_info,
+        }, \$out) or die $Template::ERROR;
+    }
     elsif ($env->{PATH_INFO} =~ m{^/newpost$}) {
         $template->process('admin/post.tp', {}, \$out)
     }

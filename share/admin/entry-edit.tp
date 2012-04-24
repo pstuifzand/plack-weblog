@@ -1,0 +1,20 @@
+<form action="/admin/post/[% entry.id %]/update" method="post" class="form-stacked">
+  <fieldset>
+    <legend>Schrijf een nieuw bericht</legend>
+    <div class="clearfix">
+      <label for="title">Titel</label>
+      <input type="text" name="title" id="title" value="[% entry.title | xml %]" class="xxlarge">
+    </div>
+    <div class="clearfix">
+      <label for="slug">Slug</label>
+      <input type="text" name="slug" id="slug" value="[% entry.slug | xml %]" class="xxlarge">
+    </div>
+    <div class="clearfix">
+      <label for="content">Uw tekst</label>
+      <textarea name="content" id="content" class="xxlarge" rows="15">[% entry.content | xml %]</textarea>
+    </div>
+  </fieldset>
+  <div class="actions">
+    <input class="btn primary" type="submit" value="Plaats bericht">
+  </div>
+</form>

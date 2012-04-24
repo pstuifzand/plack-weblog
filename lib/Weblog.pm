@@ -14,7 +14,7 @@ use Plack::Request;
 sub call {
     my $self = shift;
     my $env = shift;
-
+    
     if ($env->{PATH_INFO} =~ m{^/code}) {
         return [ 302, [ 'Location', 'http://github.com/pstuifzand/plack-weblog' ], [] ];
     }
@@ -34,11 +34,11 @@ sub call {
 
         my $entry = $db->Entry($site_id, $slug);
         $template->process('entry.tp', {
-                show_comments => 1,
-                human_readable_date => sub { $dph->human_readable($_[0]) },
-                entry => $entry,
-                site_info => $site_info,
-            }, \$out) or die $Template::ERROR;
+            show_comments => 1,
+            human_readable_date => sub { $dph->human_readable($_[0]) },
+            entry => $entry,
+            site_info => $site_info,
+        }, \$out) or die $Template::ERROR;
     }
     elsif ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)/comment$}) {
         my $slug = $1;
@@ -61,11 +61,11 @@ sub call {
         my @entries = $db->Entries($site_id);
         for my $entry (@entries) {
             $template->process('entry.tp', {
-                    show_comments => 0,
-                    human_readable_date => sub { $dph->human_readable($_[0]) },
-                    entry => $entry,
-                    site_info => $site_info,
-                }, \$out) or die $Template::ERROR;
+                show_comments => 0,
+                human_readable_date => sub { $dph->human_readable($_[0]) },
+                entry => $entry,
+                site_info => $site_info,
+            }, \$out) or die $Template::ERROR;
         }
     }
 
@@ -73,7 +73,7 @@ sub call {
     $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
 
 
-    return [ 200, [ 'Content-Type', 'text/html' ], [ $out2 ] ];
+    return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
 }
 
 1;

@@ -4,6 +4,7 @@
     <title>[% site_info.title %]</title>
     <link rel='stylesheet' href='/public/bootstrap.min.css' />
     <link rel='stylesheet' href='/public/style.css' />
+    <link rel='alternate' href="/rss.xml" type="application/rss+xml">
   </head>
   <body class='weblog'>
     <div class='container'>
