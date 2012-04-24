@@ -19,7 +19,6 @@ builder {
 
     mount '/admin'    => Weblog::Admin->new(config => $config);
     mount '/public'   => Plack::App::File->new(root => $config->{weblog}{document_root});
-#    mount '/.well-known' => Plack::App::File->new(root => $config->{weblog}{document_root}.'/.well-known');
     mount '/rss'      => Weblog::RSS->new(config => $config);
     mount '/describe' => Weblog::WebFingerDescribe->new(config => $config);
     mount '/.well-known' => Weblog::WellKnown->new(config=>$config);

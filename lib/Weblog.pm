@@ -1,5 +1,5 @@
 package Weblog;
-use parent 'Plack::Component';
+use parent 'Weblog::Controller', 'Plack::Component';
 
 use strict;
 use warnings;
@@ -7,9 +7,10 @@ use warnings;
 use Data::Dumper;
 
 use Plack::Util::Accessor qw/config/;
+use Plack::Request;
+
 use Date::Period::Human;
 use Template;
-use Plack::Request;
 
 sub call {
     my $self = shift;
@@ -19,13 +20,13 @@ sub call {
         return [ 302, [ 'Location', 'http://github.com/pstuifzand/plack-weblog' ], [] ];
     }
 
-    my $db = $env->{'weblog.db'};
+    my $db      = $env->{'weblog.db'};
     my $site_id = $env->{'weblog.site_id'};
 
     my $site_info = $db->GetSiteInfo($site_id);
 
     my $dph = Date::Period::Human->new();
-    my $template = Template->new(INCLUDE_PATH => './share');
+    my $template = $self->template;
 
     my $out = '';
 

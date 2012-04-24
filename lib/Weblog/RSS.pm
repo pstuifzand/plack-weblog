@@ -1,5 +1,5 @@
 package Weblog::RSS;
-use parent 'Plack::Component';
+use parent 'Weblog::Controller', 'Plack::Component';
 use strict;
 use warnings;
 use DBIx::DWIW;
@@ -20,6 +20,7 @@ sub call {
     my $title = $self->config->{weblog}{title};
     my $db = $env->{'weblog.db'};
     my $site_id = $env->{'weblog.site_id'};
+    my $site_info = $db->GetSiteInfo($site_id);
 
     my $fmt = DateTime::Format::RSS->new(version => '2.0');
 
@@ -38,13 +39,13 @@ sub call {
     my $rss = XML::RSS->new(version => '2.0');
     $rss->channel(
         title       => $title,
-        link        => 'http://tweevijtig.nl/rss',
-        description => 'Tweevijfig - a weblog of blog',
+        link        => 'http://' . $env->{HTTP_HOST} . '/rss',
+        description => $site_info->{title},
     );
 
     for (@entries) {
         $rss->add_item(
-            link => 'http://tweevijftig.nl/' . $_->{slug},
+            link => 'http://'.$env->{HTTP_HOST}. '/' . $_->{slug},
             title => $_->{title},
             description => $_->{content},
             pubDate => $_->{created}->strftime( "%a, %d %b %Y %H:%M:%S %z" ),

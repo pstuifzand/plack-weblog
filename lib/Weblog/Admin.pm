@@ -1,5 +1,5 @@
 package Weblog::Admin;
-use parent 'Plack::Component';
+use parent 'Weblog::Controller','Plack::Component';
 
 use strict;
 use warnings;
@@ -15,7 +15,7 @@ sub call {
     my $self = shift;
     my $env = shift;
 
-    return [ 403, [], [] ] if $env->{HTTP_X_REAL_IP} ne '127.0.0.1' and $env->{HTTP_X_REAL_IP} ne '192.168.1.59';
+    return [ 403, [], [] ] if $env->{HTTP_X_REAL_IP} ne '188.201.141.97' and $env->{HTTP_X_REAL_IP} ne '192.168.1.59';
 
     my $title = $self->config->{weblog}{title};
 
@@ -24,7 +24,7 @@ sub call {
     my $site_info = $db->GetSiteInfo($site_id);
 
     my $dph = Date::Period::Human->new();
-    my $template = Template->new(INCLUDE_PATH => './share');
+    my $template = $self->template;
 
     my $out = '';
 
