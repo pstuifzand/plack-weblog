@@ -15,7 +15,9 @@ sub call {
     my $self = shift;
     my $env = shift;
 
-    return [ 403, [], [] ] if $env->{HTTP_X_REAL_IP} ne '188.201.141.97' and $env->{HTTP_X_REAL_IP} ne '192.168.1.59';
+    return [ 403, [], [] ] if $env->{HTTP_X_REAL_IP} ne '188.201.141.97' 
+                          and $env->{HTTP_X_REAL_IP} ne '192.168.1.59' 
+                          and $env->{HTTP_X_REAL_IP} ne '195.241.214.9';
 
     my $title = $self->config->{weblog}{title};
 
@@ -35,6 +37,7 @@ sub call {
     my $types = [
         {type=>'blogpost',name=>'Bericht'},
         {type=>'page',name=>'Pagina'},
+        {type=>'event',name=>'Event'},
     ];
     my $type_names = {
         map { $_->{type} => $_->{name} } @$types,
@@ -43,9 +46,11 @@ sub call {
         my $req = Plack::Request->new($env);
 
         my $entry = {
-            title => $req->param('title'),
-            content  => $req->param('content'),
+            title   => $req->param('title'),
+            content => $req->param('content'),
             type    => $req->param('type'),
+            date    => $req->param('date'),
+            time    => $req->param('time'),
         };
 
         $db->CreateEntry($site_id, $entry);
@@ -61,6 +66,8 @@ sub call {
             slug    => $req->param('slug'),
             content => $req->param('content'),
             type    => $req->param('type'),
+            date    => $req->param('date'),
+            time    => $req->param('time'),
         };
 
         $db->UpdateEntry($site_id, $entry);
@@ -96,10 +103,12 @@ sub call {
     else {
         my @entries = $db->Entries($site_id);
         my @pages = $db->Pages($site_id);
+        my @events = $db->Events($site_id);
         $template->process('admin/index.tp', {
                 title               => $title,
                 human_readable_date => sub { $dph->human_readable($_[0]) },
                 entries             => \@entries,
+                events              => \@events,
                 pages               => \@pages,
             }, \$out) or die $Template::ERROR;
     }

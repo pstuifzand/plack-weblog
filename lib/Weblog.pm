@@ -42,7 +42,8 @@ sub call {
         }, \$out) or die $Template::ERROR;
 
         my $out2 = '';
-        $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+        my @events = $db->Events($site_id);
+        $template->process('layout.tp', { events => \@events, site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
         return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
     }
     elsif ($env->{PATH_INFO} =~ m{^/post/([a-z0-9\-]+)/comment$}) {
@@ -72,7 +73,8 @@ sub call {
             site_info => $site_info,
         }, \$out) or die $Template::ERROR;
         my $out2 = '';
-        $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+        my @events = $db->Events($site_id);
+        $template->process('layout.tp', { events => \@events, site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
         return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
     }
     elsif ($env->{PATH_INFO} =~ m{^/$}) {
@@ -86,7 +88,12 @@ sub call {
             }, \$out) or die $Template::ERROR;
         }
         my $out2 = '';
-        $template->process('layout.tp', { site_info => $site_info, insert_content_here => $out }, \$out2) or die $Template::ERROR;
+        my @entries = $db->Events($site_id);
+        $template->process('layout.tp', {
+                site_info           => $site_info,
+                insert_content_here => $out,
+                events              => \@entries,
+            }, \$out2) or die $Template::ERROR;
         return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
     }
     return [ 404, [], [] ];

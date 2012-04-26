@@ -1,3 +1,4 @@
+# vim:ft=perl
 use lib 'lib';
 #use local::lib;
 
@@ -9,6 +10,7 @@ use Weblog;
 use Weblog::Admin;
 use Weblog::WellKnown;
 use Weblog::WebFingerDescribe;
+use Weblog::Calendar;
 use Weblog::RSS;
 
 my $config = LoadFile('config.yml');
@@ -22,6 +24,7 @@ builder {
     mount '/rss'      => Weblog::RSS->new(config => $config);
     mount '/describe' => Weblog::WebFingerDescribe->new(config => $config);
     mount '/.well-known' => Weblog::WellKnown->new(config=>$config);
+    mount '/events'   => Weblog::Calendar->new(config => $config);
     mount '/'         => Weblog->new(config => $config);
 };
 

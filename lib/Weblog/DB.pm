@@ -18,8 +18,50 @@ sub _FilterEntry {
         $entry->{changed}->set_time_zone('Europe/Amsterdam');
     }
 
+    if ($entry->{date}) {
+        $entry->{date} = DateTime::Format::MySQL->parse_datetime($entry->{date} . ' ' . $entry->{time});
+        $entry->{date}->set_time_zone('Europe/Amsterdam');
+        $entry->{date}->set_locale('nl_NL');
+    }
+
     $entry->{comment_count} = $self->Scalar("SELECT COUNT(*) FROM `comment` WHERE `entry_id` = ?", $entry->{id});
     return $entry;
+}
+
+sub Event {
+    my ($self, $site_id, $year, $month, $day, $slug) = @_;
+
+    my $event = $self->Hash(<<"SQL", $site_id, sprintf('%04d-%02d-%02d', $year,$month,$day), $slug);
+SELECT *
+FROM `event` AS `ev`
+LEFT JOIN `entry` AS `e`
+ON `ev`.`entry_id` = `e`.`id`
+WHERE `e`.`site_id` = ?
+AND `ev`.`date` = ?
+AND `e`.`slug` = ?
+SQL
+    die $@ if $@;
+
+    #my $entry = $self->_FilterEntry($event);
+    return $event;
+}
+
+sub Events {
+    my ($self, $site_id) = @_;
+
+    my @events = $self->Hashes(<<"SQL", $site_id);
+SELECT *
+FROM `event` AS `ev`
+LEFT JOIN `entry` AS `e`
+ON `ev`.`entry_id` = `e`.`id`
+WHERE `e`.`site_id` = ?
+AND `ev`.`date` >= CURDATE()
+ORDER BY `ev`.`date`, `ev`.`time`
+SQL
+    die $@ if $@;
+
+    @events = map {$self->_FilterEntry($_)} @events;
+    @events;
 }
 
 sub Entry {
@@ -28,8 +70,17 @@ sub Entry {
     my $slug = shift;
 
     my $obj = $self->Hash("SELECT * FROM `entry` WHERE `site_id` = ? AND `slug` = ?", $site_id, $slug);
+
     my $entry = $self->_FilterEntry($obj);
     $entry->{comments} = [ $self->Hashes("SELECT * FROM `comment` WHERE `entry_id` = ?", $entry->{id}) ];
+
+    if ($entry->{type} eq 'event') {
+        my $event_data = $self->Hash("SELECT `date`, `time` FROM `event` WHERE `entry_id` = ?", $entry->{id});
+        die $@ if $@;
+        $entry = { %$entry, %$event_data };
+        $entry->{time} =~ s/:00$//;
+    }
+
     return $entry;
 }
 
@@ -95,6 +146,12 @@ sub CreateEntry {
 
     $self->Execute("INSERT INTO `entry` (`site_id`, `type`, `slug`, `title`, `content`, `created`)
         VALUES (?, ?, ?, ?, ?, NOW())", $site_id, $entry->{type}, $entry->{slug}, $entry->{title}, $entry->{content});
+    my $id = $self->InsertID();
+
+    if ($entry->{type} eq 'event') {
+        $self->Execute("REPLACE INTO `event` (`event_id`, `date`, `time`) VALUES (?, ?, ?)",
+            $id, $entry->{date}, $entry->{time});
+    }
 
     return;
 }
@@ -105,6 +162,12 @@ sub UpdateEntry {
     $self->Execute("UPDATE `entry` SET `type` = ?, `slug` = ?, `title` = ?, `content` = ?, `changed` = NOW() WHERE `site_id` = ? AND `id` = ?",
         $entry->{type}, $entry->{slug}, $entry->{title}, $entry->{content}, $site_id, $entry->{id});
     die $@ if $@;
+    my $id = $entry->{id};
+
+    if ($entry->{type} eq 'event') {
+        $self->Execute("REPLACE INTO `event` (`event_id`, `date`, `time`) VALUES (?, ?, ?)",
+            $id, $entry->{date}, $entry->{time});
+    }
     return;
 }
 
