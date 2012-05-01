@@ -22,6 +22,14 @@
       <label for="content">Uw tekst</label>
       <textarea name="content" id="content" class="ckeditor xxlarge" rows="15">[% entry.content | xml %]</textarea>
     </div>
+    <div class="clearfix">
+      <label for="date">Datum</label>
+      <input type="text" name="date" id="date" value="[% entry.date %]">
+    </div>
+    <div class="clearfix">
+      <label for="time">Tijd</label>
+      <input type="text" name="time" id="time" value="[% entry.time %]">
+    </div>
   </fieldset>
   <div class="actions">
     <input class="btn primary" type="submit" value="Plaats bericht">

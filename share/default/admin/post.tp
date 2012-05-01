@@ -17,6 +17,14 @@
       <label for="content">Uw tekst</label>
       <textarea name="content" id="content" class="xxlarge ckeditor" rows="15"></textarea>
     </div>
+    <div class="clearfix">
+      <label for="date">Datum</label>
+      <input type="text" name="date" id="date">
+    </div>
+    <div class="clearfix">
+      <label for="time">Tijd</label>
+      <input type="text" name="time" id="time">
+    </div>
   </fieldset>
   <div class="actions">
     <input class="btn primary" type="submit" value="Plaats bericht">
