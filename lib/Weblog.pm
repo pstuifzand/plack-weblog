@@ -88,11 +88,11 @@ sub call {
             }, \$out) or die $Template::ERROR;
         }
         my $out2 = '';
-        my @entries = $db->Events($site_id);
+        my @events = $db->Events($site_id);
         $template->process('layout.tp', {
                 site_info           => $site_info,
                 insert_content_here => $out,
-                events              => \@entries,
+                events              => \@events,
             }, \$out2) or die $Template::ERROR;
         return [ 200, [ 'Content-Type', 'text/html;charset=utf-8' ], [ $out2 ] ];
     }
