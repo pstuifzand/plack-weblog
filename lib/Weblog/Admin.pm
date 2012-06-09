@@ -17,7 +17,9 @@ sub call {
 
     return [ 403, [], [] ] if $env->{HTTP_X_REAL_IP} ne '188.201.141.97' 
                           and $env->{HTTP_X_REAL_IP} ne '192.168.1.59' 
-                          and $env->{HTTP_X_REAL_IP} ne '195.241.214.9';
+                          and $env->{HTTP_X_REAL_IP} ne '195.241.214.9'
+                          and $env->{HTTP_X_REAL_IP} ne '127.0.0.1'
+                          and $env->{HTTP_X_REAL_IP} ne '192.168.1.70';
 
     my $title = $self->config->{weblog}{title};
 
